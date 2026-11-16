@@ -20,6 +20,8 @@ def run_game():
 
     # Make the Play button.
     play_button = Button(ai_settings, screen, "Play")
+    pause_font = pygame.font.SysFont(None, 72)
+    pause_image = pause_font.render("PAUSED", True, (30, 30, 30))
 
     # Create an instance to store game statistics, and a scoreboard.
     stats = GameStats(ai_settings)
@@ -42,13 +44,21 @@ def run_game():
             ai_settings, screen, stats, sb, play_button, ship, aliens, bullets
         )
 
-        if stats.game_active:
+        if stats.game_active and not stats.game_paused:
             ship.update()
             gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets)
             gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets)
 
         gf.update_screen(
-            ai_settings, screen, stats, sb, ship, aliens, bullets, play_button
+            ai_settings,
+            screen,
+            stats,
+            sb,
+            ship,
+            aliens,
+            bullets,
+            play_button,
+            pause_image,
         )
 
 

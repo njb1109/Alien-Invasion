@@ -33,7 +33,16 @@ def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bull
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            check_keydown_events(event, ai_settings, screen, ship, bullets)
+            if event.key == pygame.K_p:
+                if stats.game_active:
+                    stats.game_paused = not stats.game_paused
+                    if stats.game_paused:
+                        ship.moving_right = False
+                        ship.moving_left = False
+            elif event.key == pygame.K_q or (
+                stats.game_active and not stats.game_paused
+            ):
+                check_keydown_events(event, ai_settings, screen, ship, bullets)
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -91,7 +100,9 @@ def fire_bullet(ai_settings, screen, ship, bullets):
         bullets.add(new_bullet)
 
 
-def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_button):
+def update_screen(
+    ai_settings, screen, stats, sb, ship, aliens, bullets, play_button, pause_image
+):
     """Update images on the screen, and flip to the new screen."""
     # Redraw the screen, each pass through the loop.
     screen.fill(ai_settings.bg_color)
@@ -108,6 +119,9 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_bu
     # Draw the play button if the game is inactive.
     if not stats.game_active:
         play_button.draw_button()
+    elif stats.game_paused:
+        pause_rect = pause_image.get_rect(center=screen.get_rect().center)
+        screen.blit(pause_image, pause_rect)
 
     # Make the most recently drawn screen visible.
     pygame.display.flip()
